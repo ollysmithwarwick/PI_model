@@ -10,8 +10,8 @@ module initialise
     implicit none
     integer :: n, k
     real(dp), dimension(n) :: r1, r2
-    real(dp),    dimension(n) :: n0, E, in1, in2
-    complex(dp), dimension(n) :: n1, phi1
+    real(dp),    dimension(n) :: in1, in2
+    complex(dp), dimension(n) :: n1, phi1, n0, E
     complex, parameter :: i = (0.0_dp, 1.0_dp)
     integer :: boundL, boundR, snapshot
     real(dp) :: noise = 0.0
@@ -23,7 +23,7 @@ module initialise
     n1(:)   = 0.0_dp
     E(:)    = 0.0_dp
     phi1(:) = 0.0_dp
-    open(21, file = 'frameinfo.in')
+    open(21, file = 'POPI/Input/frameinfo.in')
     read(21, nml = frameinfo)
     close(21)
 
@@ -40,7 +40,7 @@ module initialise
 !       phi1(k) = 0.02
     end do
 
-    open(20, file = './POPI_in.dat')
+    open(20, file = './POPI/Input/POPI_in.dat')
     do k = 1, snapshot
        call random_number(r1(:))
        read(20, '(10000f30.15)') in1(:)
@@ -66,21 +66,21 @@ module initialise
        n1(boundL:boundR) = factor * (in1(boundL:boundR) + i * in2(boundL:boundR))
        n1(:) = n1(:) + noise * (r1(:)-0.5) +&
             i * (noise * (r2(:)-0.5))
-       read(20, '(10000f30.15)') in1(:)
-       read(20, '(10000f30.15)') in1(:)
-       read(20, '(10000f30.15)') in1(:)
-       read(20, '(10000f30.15)') in1(:)
-
     end do
 
-    open(1, file = 'init.dat')
+    open(1, file = 'Input/init.dat')
 
-    do k = 0, n-1
-       write(1,2) n0(k+1), E(k+1), phi1(k+1), n1(k+1)
-    end do
-    
+    write(1,2) real(n0(:))
+    write(1,2) dimag(n0(:))
+    write(1,2) real(E(:))
+    write(1,2) dimag(E(:))
+    write(1,2) real(phi1(:))
+    write(1,2) dimag(phi1(:))
+    write(1,2) real(n1(:))
+    write(1,2) dimag(n1(:))
+
     close(1)
 
-    2 format (6F23.18)
+2   format (100000f30.15)
   end subroutine init
 end module initialise

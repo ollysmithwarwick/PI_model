@@ -31,7 +31,7 @@ module bisection_mod
 contains 
 
   subroutine readBisectData
-    open(21, file = 'Bisect/bisect.in')
+    open(21, file = 'Bisect/Input/bisect.in')
     read(21, nml = bisinfo)
     close(21)
   end subroutine readBisectData
@@ -86,7 +86,6 @@ program bisection
   use bisection_mod
   implicit none
   call PI_setup(0)  ! Reads in parameters and initial conds for PI_mod
-  outFile = 'Bisect/out.dat'
   call readBisectData
   allocate(ival(N_x, 4))          
   allocate(amp(nframes+1))     
@@ -106,7 +105,7 @@ program bisection
   call fft(1)
   write(*,*) 'FFT'
   ival(:,:) = fval(:,1:4)
-  open(31, file = 'Bisect/bis.dat')
+  open(31, file = 'Bisect/Output/bis.dat')
 
   ! if (mode == 2) then
   !    write(*,*) N_x/2, N_x/2+N_x/20
@@ -197,7 +196,7 @@ program bisection
 
   write(*,*) 'Lower limit: ', a1
   write(*,*) 'Upper limit: ', a2
-  open(99, file = 'Bisect/log.txt')
+  open(99, file = 'Bisect/Output/log.txt')
 
   ! Begin bisections !
   do bisect_count = 1, limit
@@ -260,11 +259,11 @@ program bisection
         end if
      end do
 
-     open(11, file = 'Bisect/out_turb.dat',      form = 'formatted')
+     open(11, file = 'Bisect/Output/out_turb.dat',      form = 'formatted')
      call new_state(a*1.01)
      call init_time
      call fft(-1)
-     do m = 1, 6
+     do m = 1, 4
         write(11,1) real(rval(:,m))
         write(11,1) DIMAG(rval(:,m))
      end do
@@ -274,7 +273,7 @@ program bisection
         call time_step(dt)
         if(mod(j_t, steps_per_frame) == 0) then
            call fft(-1)
-           do m = 1, 6
+           do m = 1, 4
               write(11,1) real(rval(:,m))
               write(11,1) DIMAG(rval(:,m))
            end do

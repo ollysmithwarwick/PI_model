@@ -1,9 +1,9 @@
 import numpy as np
 import matplotlib.pyplot as plt
 import os
-from shutil import copyfile
+from shutil import copyfile, copytree, rmtree
 
-input = open("plotinfo.in")
+input = open("Output/plotinfo.in")
 name = (input.readline())
 S = (input.readline())
 nframes = (input.readline())
@@ -30,7 +30,7 @@ a = 0
 
 fig, (ax1)  = plt.subplots(1,1)
 
-file = open("bis.dat")
+file = open("Bisect/Output/bis.dat")
 for line in file:
     a = a+1
     amp = (line.strip().split())
@@ -56,28 +56,26 @@ ax1.set_ylabel('Amplitude')
 #ax1.set_ylim(10^(-3),1.0)
 plt.tight_layout()
 #plt.show()
-if( not(os.path.isdir(f'bisection'))):
-    os.mkdir(f'bisection')
-if( not(os.path.isdir(f'bisection/{name}'))):
-    os.mkdir(f'bisection/{name}')
+if( not(os.path.isdir(f'Bisect/Data/'))):
+    os.mkdir(f'Bisect/Data')
+if( not(os.path.isdir(f'Bisect/Data/{name}'))):
+    os.mkdir(f'Bisect/Data/{name}')
 
-copyfile('bis.dat', f'bisection/{name}/bis.dat')
-copyfile('bisect.in', f'bisection/{name}/bisect.in')
-copyfile('setup.in', f'bisection/{name}/setup.in')
-copyfile('bisect.f90', f'bisection/{name}/bisect.f90')
-copyfile('PI.f90', f'bisection/{name}/PI.f90')
-copyfile('out.dat', f'bisection/{name}/out.dat')
-copyfile('plotBis.py', f'bisection/{name}/plotBis.py')
-fig.savefig(f'./bisection/{name}/amp.png')
+
+fig.savefig(f'./Bisect/Data/{name}/amp.png')
 
 plt.close()
 
 file.close()
 
-file = open("out.dat")
+file = open("Output/out.dat")
 print('READ')
 flux = np.zeros((N_x, nframes + 1))
-    
+
+xlist = np.linspace(0, nframes, nframes +1)
+ylist = np.linspace(0, N_x - 1, N_x)
+
+X, Y = np.meshgrid(xlist, ylist)
 for t in np.arange(0, nframes+1):
 
     nbar      = file.readline().strip().split()
@@ -88,11 +86,6 @@ for t in np.arange(0, nframes+1):
     intilde   = file.readline().strip().split()
     phi       = file.readline().strip().split()
     iphi      = file.readline().strip().split()
-    b_plus    = file.readline().strip().split()
-    ib_plus   = file.readline().strip().split()
-    b_minus   = file.readline().strip().split()
-    ib_minus   = file.readline().strip().split()
-
 
     nbar      = np.array(nbar, 'float')
     E         = np.array(E, 'float')
@@ -102,10 +95,6 @@ for t in np.arange(0, nframes+1):
     intilde   = np.array(intilde, 'float')
     phi       = np.array(phi, 'float')
     iphi      = np.array(iphi, 'float')
-    b_plus    = np.array(b_plus,'float')
-    b_minus   = np.array(b_minus,'float')
-    ib_plus   = np.array(ib_plus,'float')
-    ib_minus  = np.array(ib_minus,'float')
 
     for n in range(0,N_x):
         flux[n,t] = (intilde[n]*phi[n]-iphi[n]*ntilde[n])
@@ -163,5 +152,31 @@ for t in np.arange(0, nframes+1):
        # ax6.set_title('Flux')
 
     plt.tight_layout()
-    fig.savefig(f'./bisection/{name}/fig{t}.png')
+    fig.savefig(f'./Bisect/Data/{name}/fig{t}.png')
     plt.close()
+
+np.savetxt('Output/flux.dat', flux, fmt = '%10.6f')
+
+if( not(os.path.isdir(f'Bisect/Data/{name}'))):
+    os.mkdir(f'Bisect/Data/{name}')
+if os.path.exists(f'Bisect/Data/{name}/Input'):
+    rmtree(f'Bisect/Data/{name}/Input')
+if os.path.exists(f'Bisect/Data/{name}/Output'):
+    rmtree(f'Bisect/Data/{name}/Output')
+if os.path.exists(f'Bisect/Data/{name}/BisectInput'):
+    rmtree(f'Bisect/Data/{name}/BisectInput')
+if os.path.exists(f'Bisect/Data/{name}/BisectOutput'):
+    rmtree(f'Bisect/Data/{name}/BisectOutput')
+
+fig2, ax2 = plt.subplots()
+cs = ax2.contour(X, Y, flux, 20)
+plt.tight_layout()
+fig2.savefig(f'./Bisect/Data/{name}/contour.png')
+
+
+copytree('Bisect/Input/', f'Bisect/Data/{name}/BisectInput/')
+copytree('Bisect/Output/', f'Bisect/Data/{name}/BisectOutput/')
+copytree('Input/', f'Bisect/Data/{name}/Input/')
+copytree('Output/', f'Bisect/Data/{name}/Output/')
+
+

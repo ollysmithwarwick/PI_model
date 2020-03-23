@@ -1,0 +1,8 @@
+&FRAMEINFO
+ boundL = 1,
+ boundR = 20,
+ snapshot = 1,
+ factor = 1.0,
+ noise = 0.0,
+ seed = 4321
+ /
