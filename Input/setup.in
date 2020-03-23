@@ -1,0 +1,10 @@
+&SETUP
+ NAME='test'
+ S= 0.5,
+ N_X= 20,
+ N_T = 20000,
+ NFRAMES= 200,
+ DT= 0.01,
+ L =  5.0,
+ NONLIN=1,
+ /

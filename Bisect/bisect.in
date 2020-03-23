@@ -1,0 +1,9 @@
+&BISINFO
+ MODE = 1,	
+ LIMIT = 55,
+ a0 = 0.3,
+ STEP = 0.1,
+ LAM = 5E-03,
+ TURB = 50,
+ T_MIN = 0,
+ /
