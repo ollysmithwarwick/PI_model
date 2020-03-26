@@ -87,8 +87,9 @@ include 'init_mod.f90'   ! This is a module form of init.f90 - so it can be call
    write(*,*) 'newton_PI: Calling readinit'
    call readinit
    n = 6 * N_x + 3 ! Total number of variables, 3 global variables (S, shift, phase), 6*N_x system variables
-
    write(*,*) 'newton_PI: Reading params.in'
+   
+   outFile = 'POPI/Output/out.dat'
 
    open(99,status='old',file='POPI/Input/params.in')
    read(99,*) mgmres, nits

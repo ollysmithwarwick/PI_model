@@ -11,7 +11,7 @@ program interpolate
   read(*,*) d
 
   write(*,*) 'read done'
-  open(20, file = './out.dat')
+  open(20, file = './Tracking/Output/out.dat')
   read(20, 1) in1(:)
   read(20, 1) in2(:)
   n0(:) = in1(:) + i * in2(:)
@@ -26,7 +26,7 @@ program interpolate
   ntilde(:) = in1(:) + i * in2(:)
   close(20)
 
-  open(20, file = './out_old.dat')
+  open(20, file = './Tracking/Output/out_old.dat')
   read(20, 1) in1(:)
   read(20, 1) in2(:)
   n0(:) = n0(:) + d * (n0(:) - (in1(:) + i * in2(:)))
@@ -41,7 +41,7 @@ program interpolate
   ntilde(:) = ntilde(:) + d*(ntilde(:) - (in1(:) + i * in2(:)))
   close(20)
 
-  open(21, file = 'POPI_in.dat')
+  open(21, file = 'POPI/Input/POPI_in.dat')
   write(21, 1) real(n0(:))
   write(21, 1) dimag(n0(:))
   write(21, 1) real(E(:))
@@ -57,7 +57,7 @@ program interpolate
  
  close(20) 
 
- status = system('cp out.dat out_old.dat')
+! status = system('cp Tracking/Output/out.dat Tracking/Output/out_old.dat')
 
 1 format(100000f30.15)
 end program interpolate
