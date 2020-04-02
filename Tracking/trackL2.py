@@ -2,7 +2,7 @@
 import os
 import numpy as np
 import data
-from shutil import copyfile
+from shutil import copyfile, copytree, rmtree
 
 def outName(L):
     L = round(L*100)
@@ -91,14 +91,14 @@ def main():
     trackInfo  = []
     gridpoints = 0
     i_L = 0
-
+    complete = False
     data.ReadSetup(setup, 'Tracking/Input/setup0.in')
     data.ReadFrameInfo(frameInfo, 'Tracking/Input/frameinfo0.in')
     data.ReadTrackIn(trackInfo, 'Tracking/Input/trackL.in')
     stepS = trackInfo[1]
     dirName = trackInfo[3]
     gridpoints0 = int(numerateString(setup[3]))
-    for i_s in range(200):
+    for i_s in range(400):
         dirNameS = dirName + f'/{i_s}'
         gridpoints = gridpoints0
         setup[3] = f' N_X = {gridpoints},'
@@ -121,11 +121,11 @@ def main():
             print(guessOutOld)
             print(nextGuess)
 
-        dL = +0.05
+        dL = -0.05
 
-        for i_L in range(200):
-            L = 5.0 - 0.05 * i_L
-            dL = dL - 0.05
+        for i_L in range(1):
+            L = 5.0 + 0.05 * i_L
+            dL = dL + 0.05
 #            if round(dL*100) >= 50:
 #                print(dL)
 #                print(gridpoints)
@@ -161,13 +161,18 @@ def main():
             data.WriteFrameInfo(frameInfo, 'POPI/Input/frameinfo.in')
             Run()
             
-            copyfile('POPI/Output/out.dat', 'Tracking/Output/out.dat')
-            copyfile('POPI/Output/guess.out', 'Tracking/Output/guess.out')
-            
             guessOut.clear()
             data.ReadGuess(guessOut, 'POPI/Output/guess.out')
             if (IsConverged(guessOut)):
+                print(guessOut)
                 os.system('python Tracking/plotTrack.py')
+                copyfile('POPI/Output/out.dat', f'Tracking/Output/out.dat')
+                if os.path.exists(f'Tracking/Data/{dirNameL}/Input/'):
+                    rmtree(f'Tracking/Data/{dirNameL}/Input/')
+                if os.path.exists(f'Tracking/Data/{dirNameL}/Output/'):
+                    rmtree(f'Tracking/Data/{dirNameL}/Output/')
+                copytree('POPI/Output/', f'Tracking/Data/{dirNameL}/Output/')
+                copytree('POPI/Input/', f'Tracking/Data/{dirNameL}/Input/')
                 if i_L == 0:
                     if i_s != 0:
                         os.system('cp Tracking/Output/outL.dat Tracking/Output/out_oldL.dat')
@@ -176,13 +181,19 @@ def main():
                     guessOutL = list(guessOut)
                 continue
             else:
-                break
-        if(i_L == 0):
+                if(i_L == 0):
+                    complete = True
+                    break
+
+        if complete == True:
             break
 
-        trackInfo[3] = 'test'
-
-        data.WriteTrackInfo(trackInfo, 'Tracking/Input/trackL.in') #Rewrite trackL.in to avoid inadvertent overwrites!
+    trackInfo[3] = 'test'
+    
+    data.WriteTrackIn(trackInfo, 'Tracking/Input/trackL.in') #Rewrite trackL.in to avoid inadvertent overwrites!
+    if os.path.exists(f'Tracking/Data/{dirName}/Input/'):
+        rmtree(f'Tracking/Data/{dirName}/Input')
+    copytree('Tracking/Input/', f'Tracking/Data/{dirName}/Input')
 
 if (__name__ == '__main__'):
     main()

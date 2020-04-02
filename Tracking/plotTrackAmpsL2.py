@@ -18,16 +18,24 @@ def main():
         for iL in range(200):
             L = 5.0 - iL*0.05
             usedSolns.append(f'{trackL2.outName(L)}')
-            L = L_list.append(L)
+        #    L = L_list.append(L)
 
         usedSolns.reverse()
-        read(usedSolns, S, Amps, f'./Tracking/Data/test_neg/{iS}')
+        #read(usedSolns, S, Amps, f'./Tracking/Data/test_neg/{iS}')
 
+        usedSolns = []
         for iL in range(200):
             L = 5.0 + iL*0.05
             usedSolns.append(f'{trackL2.outName(L)}')
             L = L_list.append(L)
         read(usedSolns, S, Amps, f'./Tracking/Data/test6/{iS}')
+
+        usedSolns = []
+        for iL in range(200):
+            L = 5.0 + iL * 0.05
+            usedSolns.append(f'{trackL2.outName(L)}')
+            L = L_list.append(L)
+        read(usedSolns, S, Amps, f'./Tracking/Data/test_highS3/{iS}')
         plot(ax, S, Amps, f'L = {L}, Main Branch')
         
 #    for i in range(10):

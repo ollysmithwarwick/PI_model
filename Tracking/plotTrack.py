@@ -48,7 +48,7 @@ X, Y = np.meshgrid(xlist,ylist)
 #print(X)
 #print(Y)
 
-file = open("Tracking/Output/out.dat")
+file = open("POPI/Output/out.dat")
 print(f'Printing Results for {nframes} frames')    
     
 for t in np.arange(0, nframes+2):
@@ -77,6 +77,7 @@ for t in np.arange(0, nframes+2):
 
     if (t <= nframes):
         for n in range(0,N_x):
+            print(nframes, n, t)
             flux[n,t] = (intilde[n]*phi[n]-iphi[n]*ntilde[n])
 
     if (t == 0):
@@ -170,13 +171,13 @@ peak_flux = np.amax(flux[:, :])
 np.savetxt(f'{dirName}/peakflux.dat', np.array([S, peak_flux]), fmt = '%15.8f')
 
 
-if os.path.exists(f'{dirName}/Input'):
-    rmtree(f'{dirName}/Input')
-copytree('Input', f'{dirName}/Input')
+#if os.path.exists(f'{dirName}/Input'):
+#    rmtree(f'{dirName}/Input')
+#copytree('Input', f'{dirName}/Input')
 copyfile('PlottingScripts/plot.py', f'{dirName}/plot.py')
-if os.path.exists(f'{dirName}/Output'):
-    rmtree(f'{dirName}/Output')
-copytree('Output/', f'{dirName}/Output')
+#if os.path.exists(f'{dirName}/Output'):
+#    rmtree(f'{dirName}/Output')
+#copytree('Tracking/Output/', f'{dirName}/Output/')
 
 
 fig2, ax2 = plt.subplots()

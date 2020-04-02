@@ -28,6 +28,15 @@ def main():
     
         usedSolns = []
         for iL in range(200):
+            L = 5.0 + iL*0.02
+            if (os.path.exists(f'./Tracking/Data/test_highS3/{iS}/{trackL2.outName(L)}/peakflux.dat')):
+                usedSolns.append(f'{trackL2.outName(L)}')
+                L = L_list.append(L)
+            else:
+                break
+        read(usedSolns, S, Amps, f'./Tracking/Data/test_highS3/{iS}')
+        usedSolns = []
+        for iL in range(200):
             L = 5.0 + iL*0.05
             if (os.path.exists(f'./Tracking/Data/test6/{iS}/{trackL2.outName(L)}/peakflux.dat')):
                 usedSolns.append(f'{trackL2.outName(L)}')
@@ -35,6 +44,16 @@ def main():
             else:
                 break
         read(usedSolns, S, Amps, f'./Tracking/Data/test6/{iS}')
+
+        usedSolns = []
+        for iL in range(200):
+            L = 5.0 + iL*0.05
+            if (os.path.exists(f'./Tracking/Data/test_lowS3/{iS}/{trackL2.outName(L)}/peakflux.dat')):
+                usedSolns.append(f'{trackL2.outName(L)}')
+                L = L_list.append(L)
+            else:
+                break
+        read(usedSolns, S, Amps, f'./Tracking/Data/test_lowS3/{iS}')
 
         plot(ax, S, L_list, Amps, f'L = {L}, Main Branch')
         
